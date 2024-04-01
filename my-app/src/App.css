@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.textMessage {
+  color: black; /* Or any color you prefer */
+}

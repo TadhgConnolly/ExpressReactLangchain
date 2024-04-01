@@ -5,13 +5,16 @@ import { Input, Button, MessageList, MessageBox, MessageType } from 'react-chat-
 import { ChatItem } from "react-chat-elements"
 
 function ChatComponent() {
-    let inputReference = useRef<HTMLDivElement>(null);
+    //create references for html elements
+    let inputReference = useRef<HTMLInputElement>(null);
     let messageListReference = useRef<HTMLDivElement>(null);
     let messageListContainerRef = useRef<HTMLDivElement>(null);
     const [inputValue, setInputValue] = useState('');
+
+    //Need to give all these properties to avoid TS errors
     const [messageListArray, setMessageListArray] = useState<MessageType[]>([{
         id: '1',
-        type: 'text', // Ensure this matches one of the specific types in MessageType
+        type: 'text',
         position: 'left',
         text: "Hello, I await your command!",
         title: "",
@@ -21,10 +24,10 @@ function ChatComponent() {
         forwarded: false,
         replyButton: false,
         removeButton: false,
-        status: 'sent', // Make sure this matches one of the expected status strings
+        status: 'sent',
         notch: false,
         retracted: false,
-        // Include any other properties required by the specific message type
+        className: 'textMessage'
     }]);
 
     useEffect(() => {
@@ -33,13 +36,39 @@ function ChatComponent() {
         }
     })
 
+    //runs when input box changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value)
         console.log('text entered')
     };
 
     function messageSubmit() {
-        console.log('pressed')
+        if (!inputValue) {
+            return
+        }
+
+        setMessageListArray(messageListArray => [
+            ...messageListArray, {id: messageListArray.length,
+            type: 'text',
+            position: 'right',
+            text: inputValue,
+            title: "",
+            focus: false,
+            date: new Date(),
+            titleColor: "",
+            forwarded: false,
+            replyButton: false,
+            removeButton: false,
+            status: 'sent',
+            notch: false,
+            retracted: false,
+            className: 'textMessage'
+            }
+        ])
+        
+        if (inputReference.current) {
+            inputReference.current.value = '';
+        }
     }
 
     return (
@@ -87,10 +116,10 @@ function ChatComponent() {
                     onChange={handleChange}
                     onKeyPress={
                         (e) => {
-                            if (e.shiftKey && e.charCode === 13) {
+                            if (e.shiftKey && e.key === 'Enter') {
                                 return true
                             }
-                            if (e.charCode === 13) {
+                            if (e.key === 'Enter') {
 
                                 messageSubmit()
                             }
