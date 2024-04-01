@@ -11,7 +11,7 @@ function ChatComponent() {
     let messageListContainerRef = useRef<HTMLDivElement>(null);
     const [inputValue, setInputValue] = useState('');
 
-    //Need to give all these properties to avoid TS errors
+    //Set initial message
     const [messageListArray, setMessageListArray] = useState<MessageType[]>([{
         id: '1',
         type: 'text',
@@ -42,33 +42,47 @@ function ChatComponent() {
         console.log('text entered')
     };
 
-    function messageSubmit() {
+    const sendMessage = async (message: string) => {
+        await fetch('/send-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message }),
+        });
+      };
+
+    async function messageSubmit() {
         if (!inputValue) {
             return
         }
-
-        setMessageListArray(messageListArray => [
-            ...messageListArray, {id: messageListArray.length,
-            type: 'text',
-            position: 'right',
-            text: inputValue,
-            title: "",
-            focus: false,
-            date: new Date(),
-            titleColor: "",
-            forwarded: false,
-            replyButton: false,
-            removeButton: false,
-            status: 'sent',
-            notch: false,
-            retracted: false,
-            className: 'textMessage'
+        try {
+            await sendMessage(inputValue)
+            
+            setMessageListArray(messageListArray => [
+                ...messageListArray, {id: messageListArray.length,
+                type: 'text',
+                position: 'right',
+                text: inputValue,
+                title: "",
+                focus: false,
+                date: new Date(),
+                titleColor: "",
+                forwarded: false,
+                replyButton: false,
+                removeButton: false,
+                status: 'sent',
+                notch: false,
+                retracted: false,
+                className: 'textMessage'
+                }
+            ])
+            if (inputReference.current) {
+                inputReference.current.value = '';
             }
-        ])
+        } catch (error) {
+            console.error("Failed to send message:", error)
+        }       
         
-        if (inputReference.current) {
-            inputReference.current.value = '';
-        }
+
     }
 
     return (
