@@ -17,6 +17,7 @@ exports.processData = async (req, res) => {
       const url = "https://pastebin.com/raw/".concat(pastebinURL)
       console.log("fetching data from url:", url)
   
+      //scrape data from url
       const loader = new CheerioWebBaseLoader(url);
       const docs = await loader.load();
   
@@ -24,8 +25,11 @@ exports.processData = async (req, res) => {
         chunkSize: 1000,
         chunkOverlap: 200,
       });
+
+      //splits the data into smaller pieces
       const splits = await textSplitter.splitDocuments(docs);
   
+      //creates a vector store based on the splits
       const vectorStore = await MemoryVectorStore.fromDocuments(splits, new OpenAIEmbeddings({openAIApiKey: process.env.OPENAI_API_KEY}));
   
       const retriever = vectorStore.asRetriever();
@@ -39,11 +43,12 @@ exports.processData = async (req, res) => {
         llm
       ]);
   
+      //retriever searches the vector store for pieces of split data that are relevent to the user question
       const retrievedDocs = await retriever.getRelevantDocuments(question);
   
       console.log("Info we've fetched from datasource", retrievedDocs)
 
-
+      //call the LLM with the question from the user and the relevent context retrieved from the vector store
       const response = await ragChain.invoke({
         question: question,
         context: retrievedDocs,

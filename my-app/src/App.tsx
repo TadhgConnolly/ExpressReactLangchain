@@ -7,6 +7,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <p>PasteBin insta-rag</p>
+        <p>Enter the suffix of your PasteBin url to query the document like an LLM</p>
         <ChatComponent/>
       </header>
     </div>

@@ -14,7 +14,7 @@ function ChatComponent() {
     const [UrlInputValue, setUrlInputValue] = useState('yr5jgS72');
 
 
-    //Set initial message
+    //Set initial message - awkwardly long properties but needed for TS
     const [messageListArray, setMessageListArray] = useState<MessageType[]>([{
         id: uuidv4(),
         type: 'text',
@@ -45,10 +45,11 @@ function ChatComponent() {
     };
 
     const handleUrlInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUrlInputValue(e.target.value)}
+        setUrlInputValue(e.target.value)
+    }
 
     const sendMessage = async (question: string, pastebinURL: string) => {
-        
+
         try {
             const response = await fetch('/process-data', {
                 method: 'POST',
@@ -89,7 +90,7 @@ function ChatComponent() {
     async function messageSubmit() {
         if (!inputValue) {
             return
-        } 
+        }
         //null check, bit clunky because the above line is also null check
         if (inputReference.current) {
             inputReference.current.value = '';
@@ -116,7 +117,7 @@ function ChatComponent() {
                 }
             ])
             await sendMessage(inputValue, UrlInputValue)
-           
+
         } catch (error) {
             console.error("Failed to send message:", error)
         }
@@ -127,17 +128,17 @@ function ChatComponent() {
     return (
         <div className="chat-container">
             <div className="secondary-input-container">
-            <Input
-                value={UrlInputValue}
-                defaultValue=""
-                referance={urlInputReference}
-                className="chatbox-area"
-                placeholder="Secondary input..."
-                multiline={false}
-                maxHeight={200}
-                onChange={handleUrlInputChange}
-            />
-        </div>
+                <Input
+                    value={UrlInputValue}
+                    defaultValue=""
+                    referance={urlInputReference}
+                    className="chatbox-area"
+                    placeholder="Secondary input..."
+                    multiline={false}
+                    maxHeight={200}
+                    onChange={handleUrlInputChange}
+                />
+            </div>
             <div className="messagelist-container" ref={messageListContainerRef}>
                 <div className="message-wrapper">
                     <MessageList

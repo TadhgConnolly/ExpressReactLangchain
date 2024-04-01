@@ -38,6 +38,12 @@
 }
 
 /* ChatComponent.css */
+
+.textMessage {
+  color: black; /* Ensures text color is black */
+}
+
+
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -45,12 +51,13 @@
   position: relative;
 }
 
+/* Use flex-grow to fill available space, but not a fixed margin-bottom */
 .messagelist-container {
+  height: 400px;
+  max-height: 400px;
   flex-grow: 1;
-  position: relative;
   overflow-y: auto;
   width: 100%;
-  margin-bottom: 50px;
 }
 
 .message-wrapper {
@@ -60,18 +67,18 @@
   min-height: 100%;
 }
 
+/* Modified to be part of the natural document flow, not absolutely positioned */
 .input-container, .secondary-input-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
 }
 
-/* Adjust to avoid overlap with the primary chat input */
 .secondary-input-container {
-  bottom: 300px;
+  margin-bottom: 20px;
+  padding: 20px;
 }
 
-.textMessage {
-  color: black; /* Or any color you prefer */
+.chat-container {
+  max-height: calc(100vh - 120px);
+  flex-direction: column;
+  justify-content: space-between;
 }
