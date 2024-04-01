@@ -19,7 +19,7 @@ function ChatComponent() {
         id: uuidv4(),
         type: 'text',
         position: 'left',
-        text: "Hello, I await your command!",
+        text: "Ask me questions and I'll reply based on the url above",
         title: "",
         focus: false,
         date: new Date(),
@@ -62,7 +62,7 @@ function ChatComponent() {
             }
 
             const data = await response.json();
-            //having AI reply as a seperate function allows for simple distrinctions
+            //having AI reply as a seperate function allows for styling distrinctions
             setMessageListArray(messageListArray => [
                 ...messageListArray, {
                     id: uuidv4(),
@@ -128,16 +128,18 @@ function ChatComponent() {
     return (
         <div className="chat-container">
             <div className="secondary-input-container">
-                <Input
-                    value={UrlInputValue}
-                    defaultValue=""
-                    referance={urlInputReference}
-                    className="chatbox-area"
-                    placeholder="Secondary input..."
-                    multiline={false}
-                    maxHeight={200}
-                    onChange={handleUrlInputChange}
-                />
+                <div className="url-input-wrapper">
+                    <span className="url-prefix">https://pastebin.com/embed_js/</span>
+                    <Input
+                        value={UrlInputValue}
+                        referance={urlInputReference}
+                        className="chatbox-area"
+                        placeholder="Secondary input..."
+                        multiline={false}
+                        maxHeight={200}
+                        onChange={handleUrlInputChange}
+                    />
+                </div>
             </div>
             <div className="messagelist-container" ref={messageListContainerRef}>
                 <div className="message-wrapper">

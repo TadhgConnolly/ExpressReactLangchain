@@ -82,3 +82,25 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+.url-input-wrapper {
+  display: grid;
+  align-items: center;
+  border: 1px solid #ccc; /* Match Input border */
+  border-radius: 4px; /* Match Input border-radius */
+  padding: 5px; /* Adjust based on Input padding */
+  max-width: 600px; /* Example fixed width */
+}
+
+.url-prefix {
+  color: grey;
+  font-size: 14px; /* Adjust to desired font size */
+  background-color: white;
+}
+
+.custom-chat-input .rce-input {
+  border: none; /* Remove Input border */
+  outline: none; /* Remove focus outline */
+  flex-grow: 1; /* Ensure Input takes remaining space */
+  padding-left: 0; /* Adjust if needed */
+}
