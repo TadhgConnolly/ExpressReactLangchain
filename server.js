@@ -13,8 +13,3 @@ app.use(dataProcessingRoute);
 app.get('/', (req, res) => res.send('Hello Backend World!'));
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
-
-app.post('/send-message', (req, res) => {
-    console.log(req.body.message); // Later, replace this with function calls
-    res.status(200).send('Message received');
-  });

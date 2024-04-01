@@ -37,6 +37,41 @@
   }
 }
 
+/* ChatComponent.css */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.messagelist-container {
+  flex-grow: 1;
+  position: relative;
+  overflow-y: auto;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100%;
+}
+
+.input-container, .secondary-input-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Adjust to avoid overlap with the primary chat input */
+.secondary-input-container {
+  bottom: 300px;
+}
+
 .textMessage {
   color: black; /* Or any color you prefer */
 }

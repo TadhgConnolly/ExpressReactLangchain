@@ -7,9 +7,12 @@ import { ChatItem } from "react-chat-elements"
 function ChatComponent() {
     //create references for html elements
     let inputReference = useRef<HTMLInputElement>(null);
+    let urlInputReference = useRef<HTMLInputElement>(null);
     let messageListReference = useRef<HTMLDivElement>(null);
     let messageListContainerRef = useRef<HTMLDivElement>(null);
     const [inputValue, setInputValue] = useState('');
+    const [UrlInputValue, setUrlInputValue] = useState('yr5jgS72');
+
 
     //Set initial message
     const [messageListArray, setMessageListArray] = useState<MessageType[]>([{
@@ -39,16 +42,18 @@ function ChatComponent() {
     //runs when input box changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value)
-        console.log('text entered')
     };
 
-    const sendMessage = async (message: string) => {
-        const question = message;
+    const handleUrlInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUrlInputValue(e.target.value)}
+
+    const sendMessage = async (question: string, pastebinURL: string) => {
+        
         try {
             const response = await fetch('/process-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question }),
+                body: JSON.stringify({ question, pastebinURL }),
             });
 
             if (!response.ok) {
@@ -84,6 +89,10 @@ function ChatComponent() {
     async function messageSubmit() {
         if (!inputValue) {
             return
+        } 
+        //null check, bit clunky because the above line is also null check
+        if (inputReference.current) {
+            inputReference.current.value = '';
         }
         try {
 
@@ -106,10 +115,8 @@ function ChatComponent() {
                     className: 'textMessage'
                 }
             ])
-            await sendMessage(inputValue)
-            if (inputReference.current) {
-                inputReference.current.value = '';
-            }
+            await sendMessage(inputValue, UrlInputValue)
+           
         } catch (error) {
             console.error("Failed to send message:", error)
         }
@@ -118,27 +125,21 @@ function ChatComponent() {
     }
 
     return (
-        <div className="chat-container" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            position: 'relative',
-        }}>
-            <div className="messagelist-container" ref={messageListContainerRef} style={{
-                flexGrow: 1,
-                position: 'relative',
-                overflowY: 'auto',
-                width: '100%',
-                marginBottom: '50px',
-
-            }}>
-                <div className="message-wrapper" style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end', // This keeps the initial message at the bottom
-                    minHeight: '100%', // Ensure it takes at least the full height of the container
-                }}>
-
+        <div className="chat-container">
+            <div className="secondary-input-container">
+            <Input
+                value={UrlInputValue}
+                defaultValue=""
+                referance={urlInputReference}
+                className="chatbox-area"
+                placeholder="Secondary input..."
+                multiline={false}
+                maxHeight={200}
+                onChange={handleUrlInputChange}
+            />
+        </div>
+            <div className="messagelist-container" ref={messageListContainerRef}>
+                <div className="message-wrapper">
                     <MessageList
                         referance={messageListReference}
                         className='message-list'
@@ -147,12 +148,7 @@ function ChatComponent() {
                         dataSource={messageListArray} />
                 </div>
             </div>
-            <div className="input-container" style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-            }}>
+            <div className="input-container" >
                 <Input defaultValue=""
                     referance={inputReference}
                     className="chatbox-area"
