@@ -43,11 +43,23 @@ function ChatComponent() {
     };
 
     const sendMessage = async (message: string) => {
-        await fetch('/send-message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message }),
-        });
+        const question = message;
+        try {
+            const response = await fetch('/process-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question }),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
       };
 
     async function messageSubmit() {
