@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { v4 as uuidv4 } from 'uuid';
 import 'react-chat-elements/dist/main.css'
 import { Input, Button, MessageList, MessageBox, MessageType } from 'react-chat-elements'
 import { ChatItem } from "react-chat-elements"
@@ -13,7 +13,7 @@ function ChatComponent() {
 
     //Set initial message
     const [messageListArray, setMessageListArray] = useState<MessageType[]>([{
-        id: '1',
+        id: uuidv4(),
         type: 'text',
         position: 'left',
         text: "Hello, I await your command!",
@@ -50,50 +50,70 @@ function ChatComponent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ question }),
             });
-            
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-    
+
             const data = await response.json();
-            console.log(data);
+            //having AI reply as a seperate function allows for simple distrinctions
+            setMessageListArray(messageListArray => [
+                ...messageListArray, {
+                    id: uuidv4(),
+                    type: 'text',
+                    position: 'left',
+                    text: data.response?.kwargs?.content,
+                    title: "",
+                    focus: false,
+                    date: new Date(),
+                    titleColor: "",
+                    forwarded: false,
+                    replyButton: false,
+                    removeButton: false,
+                    status: 'sent',
+                    notch: false,
+                    retracted: false,
+                    className: 'textMessage'
+                }
+            ])
         } catch (error) {
             console.error('Error:', error);
         }
-      };
+    };
 
     async function messageSubmit() {
         if (!inputValue) {
             return
         }
         try {
-            await sendMessage(inputValue)
-            
+
             setMessageListArray(messageListArray => [
-                ...messageListArray, {id: messageListArray.length,
-                type: 'text',
-                position: 'right',
-                text: inputValue,
-                title: "",
-                focus: false,
-                date: new Date(),
-                titleColor: "",
-                forwarded: false,
-                replyButton: false,
-                removeButton: false,
-                status: 'sent',
-                notch: false,
-                retracted: false,
-                className: 'textMessage'
+                ...messageListArray, {
+                    id: messageListArray.length,
+                    type: 'text',
+                    position: 'right',
+                    text: inputValue,
+                    title: "",
+                    focus: false,
+                    date: new Date(),
+                    titleColor: "",
+                    forwarded: false,
+                    replyButton: false,
+                    removeButton: false,
+                    status: 'sent',
+                    notch: false,
+                    retracted: false,
+                    className: 'textMessage'
                 }
             ])
+            await sendMessage(inputValue)
             if (inputReference.current) {
                 inputReference.current.value = '';
             }
         } catch (error) {
             console.error("Failed to send message:", error)
-        }       
-        
+        }
+
 
     }
 

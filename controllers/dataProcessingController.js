@@ -7,13 +7,14 @@ const { PromptTemplate } = require("@langchain/core/prompts");
 const { createStuffDocumentsChain } = require("langchain/chains/combine_documents");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
 const { RunnableSequence } = require("@langchain/core/runnables");
+const { formatDocumentsAsString } = require("langchain/util/document");
 
 exports.processData = async (req, res) => {
     try {
       // Extracting the question from the request body
       const { question } = req.body;
   
-      const loader = new CheerioWebBaseLoader("https://lilianweng.github.io/posts/2023-06-23-agent/");
+      const loader = new CheerioWebBaseLoader("https://pastebin.com/raw/yr5jgS72");
       const docs = await loader.load();
   
       const textSplitter = new RecursiveCharacterTextSplitter({
@@ -25,11 +26,11 @@ exports.processData = async (req, res) => {
       const vectorStore = await MemoryVectorStore.fromDocuments(splits, new OpenAIEmbeddings({openAIApiKey: process.env.OPENAI_API_KEY}));
   
       const retriever = vectorStore.asRetriever();
-      const promptTemplate = PromptTemplate.fromTemplate(`You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise. Question: ${question}`)
-      //   const prompt = await pull<ChatPromptTemplate>("rlm/rag-prompt");
+      //TOMORROW look here to see if missing context is why RAG isn't working
+      const promptTemplate = PromptTemplate.fromTemplate(`You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise. Question: {question} Context: {context}`)
       const llm = new ChatOpenAI({ modelName: "gpt-3.5-turbo", temperature: 0, openAIApiKey: process.env.OPENAI_API_KEY });
   
-      console.log(new StringOutputParser())
+      // exampleMessage = await promptTemplate.invoke({question: question, context: retriever.pipe(formatDocumentsAsString)})
 
       const ragChain = RunnableSequence.from([
         promptTemplate,
@@ -37,9 +38,14 @@ exports.processData = async (req, res) => {
       ]);
   
       const retrievedDocs = await retriever.getRelevantDocuments(question);
+
+     console.log({
+      question: question,
+      context: retrievedDocs,
+    })
   
       const response = await ragChain.invoke({
-        question,
+        question: question,
         context: retrievedDocs,
       });
   
